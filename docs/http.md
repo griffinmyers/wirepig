@@ -73,7 +73,7 @@ A handle on the HTTP mock server.
 
 #### `mock(options): Mock`
 
-Declares a mock with the server.
+Declares a mock with the server. Will match at most one request.
 
 All functions under `req` are passed the value at their position in `options`
 and are expected to return a Boolean. For example, a function at
@@ -95,7 +95,7 @@ undefined.
     * **`method`**: (`Comparable`) Request method.
     * **`pathname`**: (`Comparable`) Request pathname with leading `/` and no
       querystring.
-    * **`query`**: (`Comparable`) Request querystring including leading `?`
+    * **`query`**: (`Comparable`) Request querystring including leading `?`.
     * **`headers`**: (`Object` | `Function`) Request headers.
       * **`$key`**: (`Comparable` | `Array<Comparable>`) An individual header,
         case sensitive. If multiple headers with the same name are expected,
@@ -115,7 +115,7 @@ undefined.
       to inject before sending the response body.
     * **`destroySocket`**: (`Boolean` | `Function`) Whether or not to suddenly
       hang up the socket in the middle of serving a request. Helpful when
-      testing error handling logic in an application
+      testing error handling logic in an application.
 
 ###### Returns
 
@@ -276,7 +276,7 @@ dep.mock({
     method: 'POST',
     pathname: Buffer.from('/bloop', 'utf8'),
     body: /^blo+p$/,
-    headers: { 'content-type': c.endsWith('json'), 'content-length': /d+/ }
+    headers: { 'content-type': c => c.endsWith('json'), 'content-length': /d+/ }
   }
 });
 ```

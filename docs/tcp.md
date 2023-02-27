@@ -48,8 +48,8 @@ like a `for` loop.
 
 When a new connection with wirepig is established, it will start buffering all
 writes it receives internally. With each write, it will evaluate all mocks
-registered with the server to see if there is a match against all the data its
-received so far.
+registered with the server to see if there is a match against all the data it's
+received on that connection so far.
 
 When a match is found, wirepig will write the response back over the socket and
 clear its internal write buffer. Subsequent writes, and thus mock matching
@@ -88,12 +88,12 @@ A handle on the TCP mock server.
 
 #### `mock(options): Mock`
 
-Declares a mock with the server.
+Declares a mock with the server. Will match at most one request.
 
 All functions under `res` are passed the current data written to the socket and
-expected to return the expected value in its position. For example, a function at `options.res.body` will be passed the
-request and request body and should return either a String, Buffer, or
-undefined.
+expected to return the expected value in its position. For example, a function
+at `options.res.body` will be passed current socket data and should return
+either a String, Buffer, or undefined.
 
 ###### Arguments
 
@@ -162,7 +162,7 @@ first data written over a socket.
 
 #### Basic Request/Response Pair
 
-This example shows the expected request response pair from issuing a `GET`
+This example shows the expected request/response pair from issuing a `GET`
 request to a redis server.
 
 ```js
@@ -222,7 +222,7 @@ Some protocols expect the server to be the first to write to a connection (mysql
 is a good example).
 
 To handle this, we can declare a mock with the `init` key. When a wirepig
-receives a new connection, it'll find any available "init" mock and write it
+receives a new connection, it'll find the first pending "init" mock and write it
 to the socket.
 
 ```js
@@ -236,7 +236,8 @@ The previous example showed two mocks we expected to occur over the same
 connection. However, the way we've written it, the first could have been
 satisfied by one connection, and the second by another.
 
-To "pin" mocks to a given connection, we can use the `Mock.mock()` function:
+To "pin" mocks to a given connection, we can use the
+[`Mock.mock()`](#mockoptions-mock-1) function:
 
 ```js
 const handshake = dep.mock({
@@ -249,7 +250,7 @@ const query = handshake.mock({
 ```
 
 Here, `query` will only match a write of `SELECT 1 + 1;` if it occurred on the
-same connection that handshake used.
+same connection that `handshake used.
 
 #### Many Mocks and Many Writes
 
@@ -261,7 +262,7 @@ dep.mock({ req: 'abcd', res: 'bloop' });
 dep.mock({ req: '1234', res: 'bleep' });
 ````
 
-Assume we establish a single connection with wirepig, the do the following:
+Assume we establish a single connection with wirepig, then do the following:
 
 1. We write `ab` to the socket. Wirepig will buffer `ab` and check all its mocks
    for a match. Since `ab` doesn't match `abcd` or `1234`, it does nothing.
