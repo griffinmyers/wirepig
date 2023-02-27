@@ -1,0 +1,88 @@
+{
+  "name": "wirepig",
+  "version": "0.1.0",
+  "description": "Better testing through the power of sockets.",
+  "keywords": [
+    "test",
+    "testing",
+    "mock",
+    "mocking",
+    "stub",
+    "stubbing",
+    "http",
+    "tcp",
+    "nock",
+    "localstack",
+    "docker-compose",
+    "network",
+    "dependency",
+    "dependencies"
+  ],
+  "author": "will myers",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/griffinmyers/wirepig"
+  },
+  "type": "module",
+  "exports": {
+    "import": "./src/index.js",
+    "require": "./dist/index.cjs"
+  },
+  "files": [
+    "/src/**/*",
+    "/dist/**/*",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "test": "NODE_ENV=test mocha && yarn test-format && yarn lint && yarn test-ts-types",
+    "format": "prettier --write \"**/*.{js,ts,d.ts}\"",
+    "test-format": "prettier --check \"**/*.{js,ts,d.ts}\"",
+    "lint": "eslint ./",
+    "test-ts-types": "tsc --project test/ts",
+    "build-cjs": "esbuild src/index.js --platform=node --bundle --format=cjs --outfile=dist/index.cjs",
+    "clean": "rm -rf ./dist",
+    "prepack": "yarn build-cjs",
+    "postpack": "yarn clean"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-sqs": "^3.204.0",
+    "@button/divvy-client": "^1.0.1",
+    "esbuild": "^0.17.8",
+    "eslint": "^8.12.0",
+    "eslint-plugin-mocha": "^10.1.0",
+    "memcached": "^2.2.2",
+    "mocha": "^9.2.2",
+    "mysql": "^2.18.1",
+    "pg": "^8.7.3",
+    "prettier": "^2.6.1",
+    "redis": "^4.0.6",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "@types/node": "^18.14.1"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "commonjs": true,
+      "es2021": true,
+      "mocha": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": "latest",
+      "sourceType": "module"
+    },
+    "plugins": [
+      "mocha"
+    ],
+    "rules": {
+      "mocha/no-exclusive-tests": "error"
+    }
+  }
+}
