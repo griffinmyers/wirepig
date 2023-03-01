@@ -92,13 +92,12 @@ export const isArray = (value, path = []) => {
 
 export const obj = (o) => {
   assert(_isPlainObject(o), 'schema must be plain object');
+  assertPredicates(Object.values(o));
 
   return (value, path = []) => {
     if (!_isPlainObject(value)) {
       return r(value, error(path, 'must be plain object', value));
     }
-
-    assertPredicates(Object.values(o));
 
     let errors = [];
     const conformed = {};
