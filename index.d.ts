@@ -44,7 +44,12 @@ type TCPFuncOptBoolable =
   | boolean
   | undefined;
 
-type HTTPResHeaders = { [key: string]: HTTPFuncOptBufferable } | undefined;
+type HTTPHeaderValue = OptBufferable | Array<HTTPFuncOptBufferable>;
+type HTTPFuncHeaderValue =
+  | ((req: IncomingMessage, reqBody: Buffer) => HTTPHeaderValue)
+  | HTTPHeaderValue;
+
+type HTTPResHeaders = { [key: string]: HTTPFuncHeaderValue } | undefined;
 
 type HTTPRes = {
   body?: HTTPFuncOptBufferable;

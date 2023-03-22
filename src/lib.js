@@ -109,11 +109,25 @@ const toStatusCode = (value, ...args) => {
 const toHeaders = (value, ...args) => {
   value = safeInvoke(value, undefined, ...args);
 
+  let res = [];
+
   if (isPlainObject(value)) {
-    return mapObj(value, ([k, v]) => [k, toBuffer(v, ...args)]);
+    for (let [k, v] of Object.entries(value)) {
+      if (isFunction(v)) {
+        v = safeInvoke(v, undefined, ...args);
+      }
+
+      if (isArray(v)) {
+        for (const aV of v) {
+          res = [...res, k, toBuffer(aV, ...args)];
+        }
+      } else {
+        res = [...res, k, toBuffer(v, ...args)];
+      }
+    }
   }
 
-  return {};
+  return res;
 };
 
 const toBuffer = (value, ...args) => {
@@ -167,7 +181,6 @@ export const toTCPRes = (res, req) => {
   };
 };
 
-export const mapObj = (o, m) => Object.fromEntries(Object.entries(o).map(m));
 export const wait = (m) => new Promise((r) => setTimeout(() => r(), m));
 
 export const printMock = (mockType) => (obj) => {

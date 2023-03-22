@@ -105,8 +105,9 @@ undefined.
     when a request matches.
     * **`body`**: (`String` | `Buffer` | `Function`) Response body.
     * **`headers`**: (`Object` | `Function`) Response headers.
-      * **`$key`**: (`String` | `Buffer` | `Function`) An individual response
-      header.
+      * **`$key`**: (`String` | `Buffer` | `Array` | `Function`) An individual
+        response header. If value is an array, will create a header for `$key`
+        for each value.
     * **`statusCode`**: (`Positive Int` | `Function`) Valid response status
       code.
     * **`headerDelay`**: (`Positive Int` | `Function`) Any delay in milliseconds
@@ -311,8 +312,8 @@ dep.mock({
 
 #### Duplicate Headers
 
-In the event that your application sends duplicate header values, they'll be
-matched as an array.
+In the event that your application sends duplicate headers, they'll be matched
+as an array.
 
 ```js
 dep.mock({
@@ -332,6 +333,19 @@ dep.mock({
   req: {
     headers: {
       'x-bloop': [/^blo+p$/, v => v.startsWith('t')]
+    }
+  }
+});
+```
+
+Similarly, you can respond with duplicate headers by specifying the values as an
+array:
+
+```js
+dep.mock({
+  res: {
+    headers: {
+      'x-bloop': ['bloop', () => Buffer.from('bloop', 'utf8')]
     }
   }
 });
