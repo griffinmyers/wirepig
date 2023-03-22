@@ -47,11 +47,15 @@ export const funcOptBufferable = alias(
   'if defined must be string, buffer, or function returning same'
 );
 
-const isValidResHeaders = keyvals(always, funcOptBufferable);
+const resHeaderValue = branchWithFunction(
+  [optBufferable, isArray],
+  [always, arr(funcOptBufferable)],
+  'if defined must be string, buffer, or array'
+);
 
 const resHeaders = branchWithFunction(
   [isPlainObject, isUndefined],
-  [isValidResHeaders, always],
+  [keyvals(always, resHeaderValue), always],
   'if defined must be plain object'
 );
 

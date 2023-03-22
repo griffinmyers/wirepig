@@ -110,7 +110,11 @@ httpDep.mock({
 httpDep.mock({
   res: {
     body: Buffer.from('body', 'utf8'),
-    headers: { 'x-bloop': Buffer.from('true', 'utf8') },
+    headers: {
+      'x-bloop': Buffer.from('true', 'utf8'),
+      'x-bleep': ['1', Buffer.from('2', 'utf8'), () => '3', undefined],
+      'x-bleep-2': () => ['1', Buffer.from('2', 'utf8'), () => '3', undefined],
+    },
   },
 });
 

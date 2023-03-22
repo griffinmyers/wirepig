@@ -6,7 +6,6 @@ import {
   compare,
   toHTTPRes,
   toTCPRes,
-  mapObj,
   wait,
 } from '../src/lib.js';
 
@@ -215,7 +214,7 @@ describe('lib', function () {
         toHTTPRes(() => ({}), req, reqBody),
         {
           body: Buffer.from([]),
-          headers: {},
+          headers: [],
           statusCode: 200,
           bodyDelay: 0,
           headerDelay: 0,
@@ -233,7 +232,7 @@ describe('lib', function () {
         ),
         {
           body: Buffer.from([]),
-          headers: {},
+          headers: [],
           statusCode: 200,
           bodyDelay: 0,
           headerDelay: 0,
@@ -245,7 +244,7 @@ describe('lib', function () {
         toHTTPRes(() => ({ statusCode: 404 }), req, reqBody),
         {
           body: Buffer.from([]),
-          headers: {},
+          headers: [],
           statusCode: 404,
           bodyDelay: 0,
           headerDelay: 0,
@@ -257,7 +256,7 @@ describe('lib', function () {
         toHTTPRes((r, rB) => ({ body: `req: ${rB}` }), req, reqBody),
         {
           body: Buffer.from('req: bloop', 'utf8'),
-          headers: {},
+          headers: [],
           statusCode: 200,
           bodyDelay: 0,
           headerDelay: 0,
@@ -273,7 +272,7 @@ describe('lib', function () {
         ),
         {
           body: Buffer.from('req: bloop', 'utf8'),
-          headers: {},
+          headers: [],
           statusCode: 200,
           bodyDelay: 0,
           headerDelay: 0,
@@ -285,7 +284,7 @@ describe('lib', function () {
         toHTTPRes(() => ({ body: (r, rB) => `req: ${rB}` }), req, reqBody),
         {
           body: Buffer.from('req: bloop', 'utf8'),
-          headers: {},
+          headers: [],
           statusCode: 200,
           bodyDelay: 0,
           headerDelay: 0,
@@ -297,7 +296,7 @@ describe('lib', function () {
         toHTTPRes(() => new Date(), req, reqBody),
         {
           body: Buffer.from([]),
-          headers: {},
+          headers: [],
           statusCode: 200,
           bodyDelay: 0,
           headerDelay: 0,
@@ -309,7 +308,7 @@ describe('lib', function () {
     it('accepts an object', function () {
       assert.deepStrictEqual(toHTTPRes({ body: 'req: bloop' }, req, reqBody), {
         body: Buffer.from('req: bloop', 'utf8'),
-        headers: {},
+        headers: [],
         statusCode: 200,
         bodyDelay: 0,
         headerDelay: 0,
@@ -320,7 +319,7 @@ describe('lib', function () {
         toHTTPRes({ body: Buffer.from('req: bloop', 'utf8') }, req, reqBody),
         {
           body: Buffer.from('req: bloop', 'utf8'),
-          headers: {},
+          headers: [],
           statusCode: 200,
           bodyDelay: 0,
           headerDelay: 0,
@@ -332,7 +331,7 @@ describe('lib', function () {
         toHTTPRes({ body: (r, rB) => `req: ${rB}` }, req, reqBody),
         {
           body: Buffer.from('req: bloop', 'utf8'),
-          headers: {},
+          headers: [],
           statusCode: 200,
           bodyDelay: 0,
           headerDelay: 0,
@@ -366,8 +365,8 @@ describe('lib', function () {
           reqBody
         ),
         {
-          body: Buffer.from([], 'utf8'),
-          headers: {},
+          body: Buffer.from([]),
+          headers: [],
           statusCode: 200,
           bodyDelay: 0,
           headerDelay: 0,
@@ -389,8 +388,8 @@ describe('lib', function () {
           reqBody
         ),
         {
-          body: Buffer.from([], 'utf8'),
-          headers: {},
+          body: Buffer.from([]),
+          headers: [],
           statusCode: 200,
           bodyDelay: 0,
           headerDelay: -1,
@@ -417,17 +416,86 @@ describe('lib', function () {
           reqBody
         ),
         {
-          body: Buffer.from([], 'utf8'),
-          headers: {
-            'x-bloop': Buffer.from([]),
-            'x-bloop-2': Buffer.from('bloop!', 'utf8'),
-            'x-string': Buffer.from('string', 'utf8'),
-            'x-buffer': Buffer.from('buffer', 'utf8'),
-          },
+          body: Buffer.from([]),
+          headers: [
+            'x-bloop',
+            Buffer.from([]),
+            'x-bloop-2',
+            Buffer.from('bloop!', 'utf8'),
+            'x-string',
+            Buffer.from('string', 'utf8'),
+            'x-buffer',
+            Buffer.from('buffer', 'utf8'),
+          ],
           statusCode: 200,
           bodyDelay: 1,
           headerDelay: 30,
           destroySocket: true,
+        }
+      );
+
+      assert.deepStrictEqual(
+        toHTTPRes({
+          headers: {
+            'x-bloop': [undefined, 'bloop', Buffer.from('bloop', 'utf8')],
+          },
+        }),
+        {
+          body: Buffer.from([]),
+          bodyDelay: 0,
+          destroySocket: false,
+          headerDelay: 0,
+          headers: [
+            'x-bloop',
+            Buffer.from([]),
+            'x-bloop',
+            Buffer.from('bloop', 'utf8'),
+            'x-bloop',
+            Buffer.from('bloop', 'utf8'),
+          ],
+          statusCode: 200,
+        }
+      );
+
+      assert.deepStrictEqual(
+        toHTTPRes({
+          headers: {
+            'x-bloop': () => [undefined, 'bloop'],
+          },
+        }),
+        {
+          body: Buffer.from([]),
+          bodyDelay: 0,
+          destroySocket: false,
+          headerDelay: 0,
+          headers: [
+            'x-bloop',
+            Buffer.from([]),
+            'x-bloop',
+            Buffer.from('bloop', 'utf8'),
+          ],
+          statusCode: 200,
+        }
+      );
+
+      assert.deepStrictEqual(
+        toHTTPRes({
+          headers: {
+            'x-bloop': [() => undefined, () => 'bloop'],
+          },
+        }),
+        {
+          body: Buffer.from([]),
+          bodyDelay: 0,
+          destroySocket: false,
+          headerDelay: 0,
+          headers: [
+            'x-bloop',
+            Buffer.from([]),
+            'x-bloop',
+            Buffer.from('bloop', 'utf8'),
+          ],
+          statusCode: 200,
         }
       );
     });
@@ -614,19 +682,6 @@ describe('lib', function () {
           destroySocket: false,
         }
       );
-    });
-  });
-
-  describe('#mapObj', function () {
-    it('maps keys and values of an object', function () {
-      const value = { bloop: 1, bleep: 2 };
-
-      assert.deepStrictEqual(
-        mapObj(value, ([k, v]) => [k.toUpperCase(), v + 1]),
-        { BLOOP: 2, BLEEP: 3 }
-      );
-
-      assert.deepStrictEqual(value, { bloop: 1, bleep: 2 });
     });
   });
 

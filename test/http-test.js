@@ -270,14 +270,23 @@ describe('http', function () {
                 'x-buffer': Buffer.from('bloop', 'utf8'),
                 'x-regexp': /bloop/,
                 'x-function': () => 0,
+                'x-arr': [
+                  'string',
+                  Buffer.from('bloop', 'utf8'),
+                  undefined,
+                  () => 'bloop',
+                  1989,
+                ],
+                'x-arr-f': () => [],
               },
             },
           },
           ['options']
         )[1],
         [
-          '`options.res.headers.x-bloop` if defined must be string, buffer, or function returning same (got 1989)',
-          '`options.res.headers.x-regexp` if defined must be string, buffer, or function returning same (got /bloop/)',
+          '`options.res.headers.x-bloop` if defined must be string, buffer, or array or function returning same (got 1989)',
+          '`options.res.headers.x-regexp` if defined must be string, buffer, or array or function returning same (got /bloop/)',
+          '`options.res.headers.x-arr.4` if defined must be string, buffer, or function returning same (got 1989)',
         ]
       );
     });
@@ -1926,6 +1935,115 @@ describe('http', function () {
         assert.strictEqual(res.statusCode, 200);
         assert.strictEqual(res.headers['x-bloop'], '');
         assert.deepStrictEqual(responseBody, '');
+      });
+
+      it('allows setting headers with duplicate keys', async function () {
+        this.dep.mock({
+          res: {
+            headers: { 'x-bloop': ['1', Buffer.from('2', 'utf8'), undefined] },
+          },
+        });
+
+        const { res } = await req({ port: this.dep.port });
+
+        assert.deepStrictEqual(res.rawHeaders.slice(0, 6), [
+          'x-bloop',
+          '1',
+          'x-bloop',
+          '2',
+          'x-bloop',
+          '',
+        ]);
+      });
+
+      it('allows setting headers with duplicate keys by function', async function () {
+        this.dep.mock({
+          res: {
+            headers: (req, reqBody) => ({
+              [req.headers['header-name']]: ['1', reqBody],
+            }),
+          },
+        });
+
+        const { res } = await req({
+          port: this.dep.port,
+          headers: { 'header-name': 'x-bloop' },
+          bufferBody: Buffer.from('bloop', 'utf8'),
+        });
+
+        assert.deepStrictEqual(res.rawHeaders.slice(0, 4), [
+          'x-bloop',
+          '1',
+          'x-bloop',
+          'bloop',
+        ]);
+      });
+
+      it('allows setting headers with duplicate keys by key function', async function () {
+        this.dep.mock({
+          res: {
+            headers: {
+              'x-bloop': (req, reqBody) => [
+                req.headers['header-value'],
+                reqBody,
+              ],
+            },
+          },
+        });
+
+        const { res } = await req({
+          port: this.dep.port,
+          headers: { 'header-value': 'bloop-1' },
+          bufferBody: Buffer.from('bloop-2', 'utf8'),
+        });
+
+        assert.deepStrictEqual(res.rawHeaders.slice(0, 4), [
+          'x-bloop',
+          'bloop-1',
+          'x-bloop',
+          'bloop-2',
+        ]);
+      });
+
+      it('allows setting headers with duplicate keys by array value function', async function () {
+        this.dep.mock({
+          res: {
+            headers: {
+              'x-bloop': [
+                (req) => req.headers['header-value'],
+                (req, reqBody) => reqBody,
+              ],
+            },
+          },
+        });
+
+        const { res } = await req({
+          port: this.dep.port,
+          headers: { 'header-value': 'bloop-1' },
+          bufferBody: Buffer.from('bloop-2', 'utf8'),
+        });
+
+        assert.deepStrictEqual(res.rawHeaders.slice(0, 4), [
+          'x-bloop',
+          'bloop-1',
+          'x-bloop',
+          'bloop-2',
+        ]);
+      });
+
+      it('allows setting headers with duplicate keys with a missing value', async function () {
+        this.dep.mock({
+          res: { headers: { 'x-bloop': ['1', undefined] } },
+        });
+
+        const { res } = await req({ port: this.dep.port });
+
+        assert.deepStrictEqual(res.rawHeaders.slice(0, 4), [
+          'x-bloop',
+          '1',
+          'x-bloop',
+          '',
+        ]);
       });
     });
 
