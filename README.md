@@ -175,11 +175,8 @@ on your needs. Other tools I highly recommend:
 
 ### Contributing
 
-Wirepig is open source, but only cautiously open to code contributions. Please do
-not open a pull request as a way to introduce a change (if you do, I will
-likely close it and ask you to please file an
-[issue](https://github.com/griffinmyers/wirepig/issues)).
-
-That said, I'm eager for any feature requests, bug reports, or general feedback.
-Please submit an [issue](https://github.com/griffinmyers/wirepig/issues) to get
-in touch and we'll take things from there.
+I'm eager to hear from you! Feature requests, bug reports, general feedback, or
+just an excuse to chat, drop into [issues](https://github.com/griffinmyers/wirepig/issues)
+and let me know what's on your mind. I much prefer it over a pull request out of
+the blue, if even so that we can get on the same page before you spend any time
+working up a patch.
