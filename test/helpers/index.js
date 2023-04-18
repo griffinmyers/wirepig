@@ -39,7 +39,12 @@ export const req = ({
     }
 
     if (Array.isArray(headers)) {
-      headers = [...Object.entries(bodyHeaders).flat(), ...headers];
+      headers = [
+        ...Object.entries(bodyHeaders).flat(),
+        'Host',
+        `localhost:${port}`,
+        ...headers,
+      ];
     } else {
       headers = { ...bodyHeaders, ...headers };
     }
