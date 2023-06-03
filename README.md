@@ -1,4 +1,4 @@
-# wirepig [![test](https://github.com/griffinmyers/wirepig/actions/workflows/test.yaml/badge.svg)](https://github.com/griffinmyers/wirepig/actions/workflows/test.yaml)
+# wirepig [![test](https://github.com/griffinmyers/wirepig/actions/workflows/test.yaml/badge.svg)](https://github.com/griffinmyers/wirepig/actions/workflows/test.yaml) <img align="right" src="./docs/assets/wirepig.png" />
 
 Wirepig helps you test software that relies on something over a network. If
 your code talks to any of the following, then wirepig can help:
