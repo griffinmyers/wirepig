@@ -37,7 +37,7 @@ dep.mock({
     method: 'POST',
     pathname: '/bloop',
     body: '{"data":"bloop"}',
-    query: '?sort=asc'
+    query: '?sort=asc',
     headers: { 'content-type': 'application/json', 'content-length': '16' }
   }
 });
