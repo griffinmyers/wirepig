@@ -14,7 +14,7 @@ software's actual dependencies. Simply tell wirepig what kinds of requests to
 emulate and point your application at it. No monkey-patching the runtime, no
 external processes, no dependency injection, just honest-to-goodness sockets.
 
-<div width="50%" align=center><img src="./docs/assets/arch.svg" /></div>
+<div width="50%" align=center><img src="./docs/assets/arch.png" /></div>
 
 Requires [NodeJS `>=14`](https://nodejs.dev/en/about/releases/).
 
