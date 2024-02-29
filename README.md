@@ -52,7 +52,7 @@ And get to mocking:
 ```js
 const dep = await http();
 
-const mock = dep.mock({
+dep.mock({
   req: { method: 'POST', pathname: '/bloop' },
   res: { statusCode: 200, body: 'bloop' },
 });
