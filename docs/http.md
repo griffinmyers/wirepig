@@ -25,7 +25,7 @@ import { http } from 'wirepig';
 
 const dep = await http();
 
-const mock = dep.mock({
+mock = dep.mock({
   req: { method: 'POST', pathname: '/bloop' },
   res: { statusCode: 200, body: 'bloop' },
 });
