@@ -172,11 +172,3 @@ on your needs. Other tools I highly recommend:
   tests against real applications like redis or mysql, if a bit heavyweight.
 * **[Localstack](https://github.com/localstack/localstack)** does a remarkable
   job emulating AWS' public API.
-
-### Contributing
-
-I'm eager to hear from you! Feature requests, bug reports, general feedback, or
-just an excuse to chat, drop into [issues](https://github.com/griffinmyers/wirepig/issues)
-and let me know what's on your mind. I much prefer it over a pull request out of
-the blue, if even so that we can get on the same page before you spend any time
-working up a patch.
